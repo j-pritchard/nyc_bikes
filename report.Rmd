@@ -37,8 +37,11 @@ Patterns of use will be analysed by considering bike hire in terms of:
 - month  
 - yearly trend  
 
+The key performance indicator (KPI) used throughout the report is "hires", indicating the frequency that bikes are borrowed from one of the stations in the bike network.  The length of bike hires is also considered as a KPI to examine the way the bikes are being used.
+  
 A rolling 30 day average will be calculated to smooth the usage data.  
-Hypothesis testing will help to test whether there is a significant difference in bike hires at weekends versus weekdays.  
+Hypothesis testing will help to test whether there is a significant difference
+in bike hires at weekends versus weekdays.  
 <br>
 
 ##### Customer Demographics
@@ -416,7 +419,7 @@ hire_data %>%
        title = "Length of Bike Hires") +
   theme_minimal()
 ```
-Over 75% of hires lasted under 10 minutes.  Every hire longer than around 18.5 minutes is considered an outlier. Note that 32 outliers are not included on the plot as their times are greater than 60 minutes.  
+Over 75% of hires lasted under 10 minutes.  Every hire longer than around 18.5 minutes is considered an outlier. Note that 32 outliers are not included on the plot as their times are greater than 90 minutes.  
 <br>
 
 ```{r fig.height = 3}
