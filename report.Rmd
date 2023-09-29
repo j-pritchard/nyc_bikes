@@ -17,16 +17,26 @@ library(leaflet)
 
 # 1. Documentation
 ### Background and Research
-Citi Bike started life as New York City’s bike share scheme. Launched in May 2013, it has grown in size over the last decade and now has 25,000 bikes and over 1,500 stations across Manhattan, Brooklyn, Queens and the Bronx as well as over the Hudson River in Jersey City and Hoboken. 
+Citi Bike started life as New York City’s bike share scheme. Launched in May 
+2013, it has grown in size over the last decade and now has 25,000 bikes and 
+over 1,500 stations across Manhattan, Brooklyn, Queens and the Bronx as well as 
+over the Hudson River in Jersey City and Hoboken. 
 
-Customers register using the Citi Bike or Lyft app. They can unlock a bike at any station and then return it to any station at the end of their trip. There are a number of pricing schemes to fit a customers' usage. The bikes are intended to be used for short trips and so hires are limited to 30 or 45 minutes, though this can be extended for a fee.
+Customers register using the Citi Bike or Lyft app. They can unlock a bike at 
+any station and then return it to any station at the end of their trip. There 
+are a number of pricing schemes to fit a customers' usage. The bikes are 
+intended to be used for short trips and so hires are limited to 30 or 45 
+minutes, though this can be extended for a fee.
 
-The sample data shows usage of ten bikes based in Jersey City throughout 2018. The data includes event data on each bike hire, including the  start and end times and locations. Limited customer information (gender, birth year and subscription type) is also in the data.
+The sample data shows usage of ten bikes based in Jersey City throughout 2018. 
+The data includes event data on each bike hire, including the  start and end 
+times and locations. Limited customer information (gender, birth year and 
+subscription type) is also in the data.
 
 Sources:  
-https://ride.citibikenyc.com/about  
-https://citibikenyc.com/how-it-works  
-R Documentation nyc_bikes "NYC Citi Bike trips"
+[About Citi Bike](https://ride.citibikenyc.com/about)  
+[Get to know Citi Bike](https://citibikenyc.com/how-it-works)  
+[R Documentation nyc_bikes "NYC Citi Bike trips"](https://search.r-project.org/CRAN/refmans/tsibbledata/html/nyc_bikes.html) 
 
 ### Business Requirements
 ##### Bike Hire Patterns Over Time
@@ -37,7 +47,10 @@ Patterns of use will be analysed by considering bike hire in terms of:
 - month  
 - yearly trend  
 
-The key performance indicator (KPI) used throughout the report is "hires", indicating the frequency that bikes are borrowed from one of the stations in the bike network.  The length of bike hires is also considered as a KPI to examine the way the bikes are being used.
+The key performance indicator (KPI) used throughout the report is "hires",
+indicating the frequency that bikes are borrowed from one of the stations in the
+bike network.  The length of bike hires is also considered as a KPI to examine
+the way the bikes are being used.
   
 A rolling 30 day average will be calculated to smooth the usage data.  
 Hypothesis testing will help to test whether there is a significant difference
@@ -60,7 +73,7 @@ The ten bikes in our data set are moved around Jersey City by customer use and b
 The time series and geospacial data allow us to examine:
 
 - length of hire
-- distance between start and end stations
+- distance between start and end stations  
 <br>
 
 ### Data Flow
@@ -71,7 +84,7 @@ Data is collected whenever a bike is unlocked from a docking station and returne
 ![Data Flow](images/data_flow.png)
 
 ### Business Insights
-By examining data trends, we can discover instances of high demand, offering opportunities to allocate resources and marketing efforts to enhance sales. The same trends can pinpoint areas with growth potential, presenting opportunities for targeted marketing or requiring further investigation.  Identifying the busiest locations will help influence future investment, both in this city and in future schemes.  The KPI from the data given is the number of bike hires. If we were given more customer data, subscription renewals and revenue from day passes would be important too.
+By examining data trends, we can discover instances of high demand, offering opportunities to allocate resources and marketing efforts to enhance sales. The same trends can pinpoint areas with growth potential, presenting opportunities for targeted marketing or requiring further investigation.  The visualisations contained in this report help to show how these insights have been uncovered. Identifying the busiest locations will help influence future investment, both in this city and in future schemes.  The KPI from the data given is the number of bike hires. If we were given more customer data, subscription renewals and revenue from day passes would be important too.  
 <br>
 
 ### Variables and Data Types
@@ -86,12 +99,16 @@ nyc_bikes has the following variables and data types (taken from R Documentation
 | start_lat     | double    | Latitude of the starting bike station |
 | start_long    | double    | Longitude of the starting bike station |
 | end_station   | factor    | Identifier for the destination bike station |
-| end_lat       | double    | Latitutde of the destination bike station |
+| end_lat       | double    | Latitude of the destination bike station |
 | end_long      | double    | Longitude of the destination bike station |
 | type          | factor    | Type of subscription |
 | birth_year    | double    | Bike rider's year of birth |
 | gender        | factor    | Gender of the bike rider |
 
+factor: Used when there are a limited number of possible responses. Can be text or a number.  
+POSIXct: A date and/or time. In this case a date and time when hires started/ended.  
+double: A number, here denoting a latitude, longitude or year.  
+<br>
 Some of these columns were manipulated to extract time elements or to reveal other insights such as length of hire and distance between start station and destination station.  
 <br>
 
@@ -109,11 +126,12 @@ The area for the data comes from a comparatively small, urban area in Jersey Cit
 
 # 2. Data Cleaning
 The data was clean with very little tidying needed. There was no missing data, though on 269 journeys customers declined to give their gender.  
-Two customers claimed to be around 130 years old and there was a strong prevalence for customers to have a birth year of '69 which is likely to be spurious in some cases. Other than that there was no reason to doubt the reliability of customer data and no changes were made.  
+<br>
+Two customers claimed to be around 130 years old and there was a strong prevalence for customers to have a birth year of '69 which is likely to be spurious in some cases. To preserve as much data integrity as possible, these were not altered during the data clean. Other than that there was no reason to doubt the reliability of customer data; no changes were made.  
 <br>
 The data was wrangled to allow for easier analysis using time variables. The duration of each hire was calculated. The haversine formula was applied to find the distance between start and end stations.  
 <br>
-Some of the lengths of time that bikes were hired seem excessive considering that bikes are supposed to be borrowed for under one hour. This may be because customers failed to correctly dock the bike at the end point or didn't realise that keeping the bike for hours would be costly.
+Some of the lengths of time that bikes were hired seem excessive considering that bikes are supposed to be borrowed for under one hour. This may be because customers failed to correctly dock the bike at the end point or didn't realise that keeping the bike for hours would be costly. Again, these times were not altered during the data clean. Medians and quartiles were preferred when comparing the length of time that bikes were hired, to dampen the effect of extreme results.
 ```{r message=FALSE, warning=FALSE}
 hire_data <- nyc_bikes %>% 
   mutate(hour = hour(start_time),
